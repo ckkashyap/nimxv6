@@ -1,0 +1,13 @@
+*~
+_*
+.*.swp
+*.o
+*.d
+*.asm
+*.sym
+*.img
+vectors.S
+mkfs
+.gdbinit
+out
+fs
