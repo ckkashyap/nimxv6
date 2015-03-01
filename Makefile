@@ -156,10 +156,16 @@ out/initcode: $(INITCODESRC)
 	$(OBJCOPY) -S -O binary out/initcode.out out/initcode
 	$(OBJDUMP) -S out/initcode.o > out/initcode.asm
 
+
+.PHONY: nimobjects
+nimobjects:
+	$(NIM)/bin/nim c --noLinking --os:standalone --deadCodeElim:on --noMain  --parallelBuild:1 --gcc.exe:$(GCC) --passC:"-I$(NIM)/tinyc/win32/include" --passC:"-w" --passC:"-O2" --passC:"-Wall" --passC:"-Wextra" --passC:"-ffreestanding" --passC:"-mcmodel=kernel" --threads:on   main.nim
+
+
 ENTRYCODE = kobj/entry$(BITS).o
 LINKSCRIPT = kernel/kernel$(BITS).ld
-out/kernel.elf: $(OBJS) $(ENTRYCODE) out/entryother out/initcode $(LINKSCRIPT) $(FSIMAGE)
-	$(LD) $(LDFLAGS) -T $(LINKSCRIPT) -o out/kernel.elf $(ENTRYCODE) $(OBJS) -b binary out/initcode out/entryother $(FSIMAGE)
+out/kernel.elf: $(OBJS) $(ENTRYCODE) out/entryother out/initcode $(LINKSCRIPT) $(FSIMAGE) nimobjects
+	$(LD) $(LDFLAGS) -T $(LINKSCRIPT) -o out/kernel.elf $(ENTRYCODE) $(OBJS) nimcache/*.o -b binary out/initcode out/entryother $(FSIMAGE)
 	$(OBJDUMP) -S out/kernel.elf > out/kernel.asm
 	$(OBJDUMP) -t out/kernel.elf | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > out/kernel.sym
 
@@ -218,6 +224,7 @@ fs.img: out/mkfs README $(UPROGS)
 -include */*.d
 
 clean: 
+	rm -rf nimcache
 	rm -rf out fs uobj kobj
 	rm -f kernel/vectors.S xv6.img xv6memfs.img fs.img .gdbinit
 
