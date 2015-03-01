@@ -27,13 +27,16 @@ const COM1 = 0x3f8
 var uart : bool = false
 
 
-proc uartPutC(byte: int8) = 
+
+proc uartputc*(byte: int8) {.exportc.} = 
   if not uart:
     return
   for i in 0 .. 128:
     if 0 == (int8(inb(COM1+5)) and 0x20):
        break
   outb(COM1, uint8(byte))  
+
+
 
 proc uartGetC() : int = 
   if not uart:
@@ -47,7 +50,7 @@ proc uartGetC() : int =
 
 proc uartPutHexDigit(h: int8) =
   var hexString: cstring  = "0123456789ABCDEF"
-  uartPutC(int8(hexString[h]))
+  uartputc(int8(hexString[h]))
   
 proc uartPutInt8*(b: int8) =
   let n1 = (b and 0xf0) shr 4
@@ -76,9 +79,9 @@ proc uartPutInt64*(qw: int64) =
 
 proc uartPutStr*(text: cstring) = 
   for i in 0 .. text.len - 1:
-    uartPutC(int8(text[i]))
+    uartputc(int8(text[i]))
 
-proc earlyInit* () =
+proc uartearlyinit*() : bool {.exportc.} =
   outb(COM1+2 , 0)
 
   #9600 baud, 8 data bits, 1 stop bit, parity off.
@@ -92,17 +95,13 @@ proc earlyInit* () =
 
   var b = inb(COM1 + 5)
   if int(b) == 0xff:
-    return
+    return false
 
   uart = true
 
   uartPutStr("xv6...\n")
-
-  var x = uartGetC()
-
-  if x == 65:
-    while true:
-      uartPutStr("Capital A pressed\n")
+  return true
   
 
   
+

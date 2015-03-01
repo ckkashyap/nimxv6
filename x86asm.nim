@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+
 proc outb* (port: uint16, value: uint8) =
   asm """
     outb %%al, %%dx
