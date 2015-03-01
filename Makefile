@@ -39,7 +39,6 @@ OBJS := \
 	kobj/timer.o\
 	kobj/trapasm$(BITS).o\
 	kobj/trap.o\
-	kobj/uart.o\
 	kobj/vectors.o\
 	kobj/vm.o\
 	$(XOBJS)
