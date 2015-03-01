@@ -23,10 +23,9 @@
 import x86asm
 
 const COM1 = 0x3f8
+const IRQ_COM1 = 4
 
 var uart : bool = false
-
-
 
 proc uartputc*(byte: int8) {.exportc.} = 
   if not uart:
@@ -36,9 +35,7 @@ proc uartputc*(byte: int8) {.exportc.} =
        break
   outb(COM1, uint8(byte))  
 
-
-
-proc uartGetC() : int = 
+proc uartgetc() : int {.exportc.}  = 
   if not uart:
     return -1
   
@@ -102,6 +99,20 @@ proc uartearlyinit*() : bool {.exportc.} =
   uartPutStr("xv6...\n")
   return true
   
+proc consoleintr(action: proc (): int ) {.importc: "consoleintr".}
 
-  
+proc uartintr*() {.exportc.} = 
+  consoleintr(uartgetc)
+
+proc picenable(i: int32) {.importc: "picenable".}
+proc ioapicenable(i: int32, c: int32) {.importc: "ioapicenable".}
+
+proc uartinit*() {.exportc.} =
+  if not uart:
+    return
+
+  discard inb(COM1+2)
+  discard inb(COM1)
+  picenable(IRQ_COM1)
+  ioapicenable(IRQ_COM1, 0)
 
