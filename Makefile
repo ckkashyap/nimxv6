@@ -265,4 +265,4 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 	$(QEMU) -nographic $(QEMUOPTS) -S $(QEMUGDB)
 
 run: fs.img xv6.img
-	$(QEMU) -kernel out/kernel.elf -hdb fs.img -vnc :1 --serial stdio -m 512
+	$(QEMU) -kernel out/kernel.elf -hdb fs.img -vnc :1 -smp 2 --serial stdio -m 512
