@@ -31,7 +31,6 @@ OBJS := \
 	kobj/pipe.o\
 	kobj/proc.o\
 	kobj/spinlock.o\
-	kobj/string.o\
 	kobj/swtch$(BITS).o\
 	kobj/syscall.o\
 	kobj/sysfile.o\

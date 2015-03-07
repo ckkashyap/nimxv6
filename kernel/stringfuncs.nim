@@ -53,3 +53,31 @@ proc strncmp(p: cstring, q: cstring, length: int) : int {.exportc.} =
     if pc != qc: return (pc - qc)
     if pc == 0: return 0
   return 0
+
+proc memmove(dst: ptr char, src: ptr char, length: int) : ptr char {.exportc.} =
+  var src1: cstring = cast[cstring](src)
+  var dst1: cstring = cast[cstring](dst)
+  for idx in 0 .. length - 1:
+    dst1[idx] = src1[idx]
+  dst
+
+proc memcpy(dst: ptr char, src: ptr char, length: int) : ptr char {.exportc.} =
+  memmove(dst, src, length)
+
+
+# TODO - check if this can be optimized
+proc memcmp(p: cstring, q: cstring, length: int) : int {.exportc.} =
+  for idx in 0 .. length - 1:
+    var pc:int = int(p[idx])
+    var qc:int  = int(q[idx])
+    if pc != qc: return (pc - qc)
+  return 0
+
+# TODO - types should be proper - not int32
+# Also use better pointer types for faster copy
+proc memset(dst: ptr char, val: int32, length: int) : ptr char {.exportc.} =
+  var dst1: cstring = cast[cstring](dst)
+  var byte:uint8 = uint8(val and 0xff)
+  for idx in 0 .. length - 1:
+    dst1[idx] = char(byte)
+  dst
