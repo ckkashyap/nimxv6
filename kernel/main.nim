@@ -1,1 +1,1 @@
-import x86asm, timer
+import x86asm, timer, stringfuncs
