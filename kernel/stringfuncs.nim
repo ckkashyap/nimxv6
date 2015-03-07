@@ -46,14 +46,10 @@ proc strncpy(o: ptr char, input: cstring, length: int) : ptr char {.exportc.} =
   o  
 
 # TODO - check if this can be optimized
-proc strncmp(p: ptr char, q: ptr char, length: int) : int32 {.exportc.} =
-  var p1: cstring = cast[cstring](p)
-  var q1: cstring = cast[cstring](q)
+proc strncmp(p: cstring, q: cstring, length: int) : int {.exportc.} =
   for idx in 0 .. length - 1:
-    if p1[idx] != q1[idx]:
-      var pc:int32  = int32(p1[idx])
-      var qc:int32  = int32(q1[idx])
-      return (pc - qc)
-    if p1[idx] == char(0):
-      return 0
+    var pc:int = int(p[idx])
+    var qc:int  = int(q[idx])
+    if pc != qc: return (pc - qc)
+    if pc == 0: return 0
   return 0
