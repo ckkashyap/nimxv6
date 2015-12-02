@@ -50,6 +50,9 @@ endif
 
 # Cross-compiling (e.g., on Mac OS X)
 #TOOLPREFIX = i386-jos-elf-
+TOOLPREFIX = /Users/kashyap/Documents/dev/GCC/5.2.0/install/bin/x86_64-elf-
+GCC = $(TOOLPREFIX)gcc
+
 
 # Using native tools (e.g., on X86 Linux)
 #TOOLPREFIX =
@@ -156,7 +159,7 @@ out/initcode: $(INITCODESRC)
 
 .PHONY: nimobjects
 nimobjects:
-	$(NIM)/bin/nim c --noLinking --os:standalone --deadCodeElim:on --noMain  --parallelBuild:1 --gcc.exe:$(GCC) --passC:"-I$(NIM)/tinyc/win32/include" --passC:"-w" --passC:"-O2" --passC:"-Wall" --passC:"-Wextra" --passC:"-ffreestanding" --passC:"-mcmodel=kernel" --threads:on   kernel/main.nim
+	$(NIM)/bin/nim c --noLinking --gc:none --os:standalone --deadCodeElim:on --noMain  --parallelBuild:1 --gcc.exe:$(GCC)  --passC:"-w" --passC:"-O2" --passC:"-Wall" --passC:"-Wextra" --passC:"-ffreestanding" --passC:"-D_POSIX_THREADS"  --passC:"-mcmodel=kernel" --threads:on   kernel/main.nim
 
 
 ENTRYCODE = kobj/entry$(BITS).o
